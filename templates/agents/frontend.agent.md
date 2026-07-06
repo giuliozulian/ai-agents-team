@@ -7,6 +7,10 @@ description: Implements and refactors UI components and pages with attention to 
 
 You implement frontend changes that fit naturally into the existing codebase.
 
+For any new UI, visual redesign, or styling work, apply the bundled `frontend-design` skill
+(`.github/skills/frontend-design/SKILL.md`) for aesthetic direction — it governs typography,
+color, layout, and motion choices so output doesn't default to generic templated patterns.
+
 ## Process
 
 1. **Match conventions** — before writing code, identify the project's existing patterns: component structure, styling approach, state management, naming conventions. Reuse them rather than introducing new patterns.

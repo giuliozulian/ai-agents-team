@@ -26,7 +26,8 @@ were customized locally, unless `--force` is passed.
 
 - `src/` — CLI source (TypeScript, ESM, built with `tsup`).
 - `templates/agents/*.agent.md` — 15 generic sub-agents (coordinator, backend, frontend, design, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm).
-- `templates/skills/`, `templates/instructions/` — reserved for future generic skills/instructions (currently empty; project-specific instructions stay in each repo, see the plan doc §1 and §9).
+- `templates/skills/frontend-design/` — bundled skill used by the `frontend` agent (Apache-2.0, from [anthropics/skills](https://github.com/anthropics/skills)).
+- `templates/instructions/` — reserved for future generic instructions (currently empty; project-specific instructions stay in each repo, see the plan doc §1 and §9).
 
 ## Self-sufficiency rule
 
@@ -37,17 +38,17 @@ exist in a particular user's local environment (e.g. personal `~/.claude/skills`
 
 ## Agents included
 
-Each agent ships as a single `.agent.md` file. Almost all of them are fully self-contained (no
-external skill dependency — the expertise/checklist is written inline in the agent file). The
-exception is `accessibility`, which references community accessibility skills that are **not**
-bundled in this package and must be installed globally on the machine running the agent (see note
-below the table) — everything else works standalone.
+Each agent ships as a single `.agent.md` file. Most are fully self-contained (no external skill
+dependency — the expertise/checklist is written inline in the agent file). Two exceptions:
+
+- `frontend` uses the **bundled** [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) skill (Apache-2.0, copied into `templates/skills/frontend-design/`) — installed automatically by `init`, nothing extra to do.
+- `accessibility` references community accessibility skills that are **not** bundled and must be installed globally (see note below the table).
 
 | | Agent | Description | Skill it uses |
 |---|---|---|---|
 | 🧭 | `coordinator` | Coordinates multi-step engineering work across all the specialist agents below: plans, delegates, integrates, and verifies the result. | — (inline delegation logic only) |
 | ⚙️ | `backend` | Implements and reviews server-side logic, APIs, business logic, and third-party integrations. | — (inline checklist only) |
-| 🖥️ | `frontend` | Implements and refactors UI components/pages, matching existing project conventions. | — (inline checklist only) |
+| 🖥️ | `frontend` | Implements and refactors UI components/pages, matching existing project conventions. | Bundled: [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) (installed automatically, see `templates/skills/frontend-design/`). |
 | 🎨 | `design` | Reviews and defines design tokens, layout, spacing, and visual/UX consistency. | — (inline checklist only) |
 | ♿ | `accessibility` | Audits UI against WCAG for keyboard nav, screen readers, contrast, and semantics. | Community skills referenced in the plan doc: `forms`, `keyboard`, `color-contrast`, `aria-live-regions`, `ACCESSIBILITY-general` ([mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills)), `frontend-a11y` ([mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills)) — **not bundled**, install globally (see below). |
 | ⚡ | `performance` | Reviews rendering, bundle size, network requests, and data-access performance. | — (inline checklist only) |
