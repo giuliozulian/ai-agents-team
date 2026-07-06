@@ -50,17 +50,34 @@ export async function init(options: InitOptions = {}): Promise<void> {
   const existingManifest = (await loadManifest(projectRoot)) ?? emptyManifest(version);
   const manifest = { ...existingManifest, toolkitVersion: version };
 
+  const failures: { targetRelative: string; error: Error }[] = [];
+  let installedCount = 0;
+
   for (const item of selected) {
     for (const file of item.files) {
-      const content = await copyTemplateFile(projectRoot, file);
-      manifest.files[file.targetRelative] = {
-        hash: hashContent(content),
-        version,
-      };
-      console.log(pc.green("+"), file.targetRelative);
+      try {
+        const content = await copyTemplateFile(projectRoot, file);
+        manifest.files[file.targetRelative] = {
+          hash: hashContent(content),
+          version,
+        };
+        console.log(pc.green("+"), file.targetRelative);
+        installedCount += 1;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        failures.push({ targetRelative: file.targetRelative, error });
+        console.log(pc.red("✗"), file.targetRelative, pc.dim(`(${error.message})`));
+      }
     }
   }
 
   await saveManifest(projectRoot, manifest);
-  console.log(pc.bold(`\nInstalled ${selected.length} item(s). ai-agents-team v${version}`));
+  console.log(pc.bold(`\nInstalled ${installedCount} file(s). ai-agents-team v${version}`));
+  if (failures.length > 0) {
+    console.log(
+      pc.yellow(
+        `${failures.length} file(s) failed to install (see ✗ above, often a transient network error) — re-run \`init\` or \`sync\` to retry just those.`,
+      ),
+    );
+  }
 }

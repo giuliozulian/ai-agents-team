@@ -1,0 +1,62 @@
+/**
+ * Registry of skills that are fetched live from their upstream source at
+ * `init`/`sync` time, instead of being vendored as static files in this
+ * package. This guarantees the installed skill is always the latest
+ * upstream version, at the cost of requiring network access during
+ * `init`/`sync` and trusting the content served by the source URL at
+ * that moment (no local pinned/reviewed copy).
+ */
+export interface RemoteSkillFile {
+  /** URL the file's content is fetched from at install/sync time. */
+  url: string;
+  /** File name to write under `.github/skills/<skillId>/`. */
+  targetName: string;
+}
+
+export interface RemoteSkillDefinition {
+  id: string;
+  files: RemoteSkillFile[];
+}
+
+export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
+  {
+    id: "frontend-design",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/SKILL.md",
+        targetName: "SKILL.md",
+      },
+      {
+        url: "https://raw.githubusercontent.com/anthropics/skills/main/skills/frontend-design/LICENSE.txt",
+        targetName: "LICENSE.txt",
+      },
+    ],
+  },
+];
+
+export async function fetchRemoteText(url: string): Promise<string> {
+  const maxAttempts = 3;
+  let lastError: Error | undefined;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        return await response.text();
+      }
+      lastError = new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+      // Only retry on rate limiting / transient server errors.
+      if (response.status !== 429 && response.status < 500) {
+        throw lastError;
+      }
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+    }
+
+    if (attempt < maxAttempts) {
+      await new Promise((resolve) => setTimeout(resolve, attempt * 500));
+    }
+  }
+
+  throw lastError ?? new Error(`Failed to fetch ${url}`);
+}

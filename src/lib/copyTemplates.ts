@@ -1,6 +1,7 @@
-import { readdir, readFile, writeFile, mkdir, stat } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import { dirname, join, relative, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import { REMOTE_SKILLS, fetchRemoteText } from "./remoteSkills.js";
 
 /** Absolute path to the `templates/` directory shipped with this package. */
 export const TEMPLATES_ROOT = join(
@@ -12,8 +13,10 @@ export const TEMPLATES_ROOT = join(
 export type TemplateCategory = "agents" | "skills" | "instructions";
 
 export interface TemplateFile {
-  /** Absolute path to the template source file. */
-  source: string;
+  /** Absolute path to the template source file. Mutually exclusive with `url`. */
+  source?: string;
+  /** URL to fetch the file's content from at install/sync time. Mutually exclusive with `source`. */
+  url?: string;
   /** Path of the installed file, relative to the project root. */
   targetRelative: string;
 }
@@ -110,26 +113,42 @@ async function safeReaddirFiles(dir: string): Promise<string[]> {
   }
 }
 
+function listRemoteSkillItems(): TemplateItem[] {
+  return REMOTE_SKILLS.map((skill) => ({
+    category: "skills" as const,
+    id: skill.id,
+    files: skill.files.map((file) => ({
+      url: file.url,
+      targetRelative: join(".github", "skills", skill.id, file.targetName),
+    })),
+  }));
+}
+
 /** Lists every template item (agent, skill, instructions file) available in the package. */
 export async function listTemplateItems(
   templatesRoot: string = TEMPLATES_ROOT,
 ): Promise<TemplateItem[]> {
-  const [agents, skills, instructions] = await Promise.all([
+  const [agents, localSkills, instructions] = await Promise.all([
     listAgentItems(templatesRoot),
     listSkillItems(templatesRoot),
     listInstructionItems(templatesRoot),
   ]);
-  return [...agents, ...skills, ...instructions];
+  return [...agents, ...localSkills, ...listRemoteSkillItems(), ...instructions];
 }
 
-/** Copies a single template file to its destination under the project root. */
+/** Reads a template file's current content, without writing it anywhere. */
+export async function readTemplateFileContent(file: TemplateFile): Promise<string> {
+  return file.url ? await fetchRemoteText(file.url) : await readFile(file.source!, "utf8");
+}
+
+/** Copies (or fetches) a single template file to its destination under the project root. */
 export async function copyTemplateFile(
   projectRoot: string,
   file: TemplateFile,
 ): Promise<string> {
   const destination = join(projectRoot, file.targetRelative);
   await mkdir(dirname(destination), { recursive: true });
-  const content = await readFile(file.source, "utf8");
+  const content = await readTemplateFileContent(file);
   await writeFile(destination, content, "utf8");
   return content;
 }
