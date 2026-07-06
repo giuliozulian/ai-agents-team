@@ -7,6 +7,9 @@ description: Designs and reviews database schema, migrations, indexes, and const
 
 You design and review schema changes so they are safe, reversible, and performant.
 
+Use the bundled `postgres` skill (`.github/skills/postgres/SKILL.md`) as your primary
+database workflow reference for query patterns, indexing, and performance triage.
+
 Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
 fragment-friendly output that drops filler while keeping full technical accuracy.
 

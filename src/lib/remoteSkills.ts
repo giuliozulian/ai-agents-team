@@ -20,6 +20,24 @@ export interface RemoteSkillDefinition {
 
 export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
   {
+    id: "ci-cd",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/ahmedasmar/devops-claude-skills/main/ci-cd/skills/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "postgres",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/planetscale/database-skills/main/skills/postgres/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
     id: "design-taste-frontend",
     files: [
       {
