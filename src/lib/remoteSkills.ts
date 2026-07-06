@@ -86,6 +86,15 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
       },
     ],
   },
+  {
+    id: "grilling",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mattpocock/skills/main/skills/productivity/grilling/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
 ];
 
 export async function fetchRemoteText(url: string): Promise<string> {
