@@ -4,7 +4,9 @@ A team of 15 specialized AI agents (coordinator, backend, frontend, design, acce
 
 See [agent-toolkit-package-plan.md](agent-toolkit-package-plan.md) for the original design doc.
 
+## Usage
 
+```bash
 # in a consumer project
 npx ai-agents-team init   # first install (interactive, or --all)
 npx ai-agents-team sync   # update installed files to latest templates
