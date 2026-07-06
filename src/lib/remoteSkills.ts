@@ -20,6 +20,15 @@ export interface RemoteSkillDefinition {
 
 export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
   {
+    id: "design-taste-frontend",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/Leonxlnx/taste-skill/main/skills/taste-skill/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
     id: "frontend-design",
     files: [
       {

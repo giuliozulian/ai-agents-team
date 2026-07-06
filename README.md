@@ -1,6 +1,6 @@
 # ai-agents-team
 
-A team of 15 specialized AI agents (coordinator, backend, frontend, design, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm) for web development, distributed as a small CLI so every project can install and update them from one place instead of copy-pasting files by hand.
+A team of 16 specialized AI agents (coordinator, backend, frontend, design, designer, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm) for web development, distributed as a small CLI so every project can install and update them from one place instead of copy-pasting files by hand.
 
 See [agent-toolkit-package-plan.md](agent-toolkit-package-plan.md) for the original design doc.
 
@@ -18,13 +18,15 @@ npx ai-agents-team list   # show available vs installed
 `init` copies selected agents/skills/instructions into `.github/` in the current project and writes a
 `.github/ai-agents-team.lock.json` manifest (content hash + version per file). `sync` re-copies template
 files whose local hash still matches the manifest (i.e. untouched since install) and **skips** files that
-were customized locally, unless `--force` is passed.
+were customized locally, unless `--force` is passed. During `init`, the CLI also ensures these managed
+outputs are listed in `.gitignore` (`.github/agents/`, `.github/skills/`, `.github/instructions/`, and
+`.github/ai-agents-team.lock.json`) to avoid accidental commits.
 
 ## Repo layout
 
 - `src/` — CLI source (TypeScript, ESM, built with `tsup`).
 - `src/lib/remoteSkills.ts` — registry of skills fetched live from their upstream source at `init`/`sync` time (see below).
-- `templates/agents/*.agent.md` — 15 generic sub-agents (coordinator, backend, frontend, design, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm).
+- `templates/agents/*.agent.md` — 16 generic sub-agents (coordinator, backend, frontend, design, designer, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm).
 - `templates/instructions/` — reserved for future generic instructions (currently empty; project-specific instructions stay in each repo, see the plan doc §1 and §9).
 
 ## Self-sufficiency rule
@@ -51,12 +53,13 @@ substance) to reduce output tokens across the whole team, not only a single
 specialist agent.
 
 Each agent ships as a single `.agent.md` file. Most are fully self-contained (no external skill
-dependency — the expertise/checklist is written inline in the agent file). Three exceptions, all
+dependency — the expertise/checklist is written inline in the agent file). Four exceptions, all
 fetched live at `init`/`sync` time (see Self-sufficiency rule above) — nothing manual required:
 
 - all agents use `caveman` (team-wide compression skill);
 - `coordinator` uses [`grilling`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grilling/SKILL.md) ([mattpocock/skills](https://github.com/mattpocock/skills)) to stress-test a plan with the user before delegating work.
 - `frontend` uses [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) (Apache-2.0, [anthropics/skills](https://github.com/anthropics/skills)).
+- `designer` uses [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md) from [tasteskill.dev](https://www.tasteskill.dev/) ([Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)) to define interface direction and collaborate with frontend on implementation.
 - `accessibility` uses six skills from [mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills) (AGPL-3.0) and [mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills) (see table below).
 
 | | Agent | Description | Skill it uses |
@@ -65,6 +68,7 @@ fetched live at `init`/`sync` time (see Self-sufficiency rule above) — nothing
 | ⚙️ | `backend` | Implements and reviews server-side logic, APIs, business logic, and third-party integrations. | Team-wide `caveman` + inline checklist. |
 | 🖥️ | `frontend` | Implements and refactors UI components/pages, matching existing project conventions. | Team-wide `caveman` + live-fetched: [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) → `.github/skills/frontend-design/`. |
 | 🎨 | `design` | Reviews and defines design tokens, layout, spacing, and visual/UX consistency. | Team-wide `caveman` + inline checklist. |
+| 🧩 | `designer` | Defines interface direction and works with frontend to ship implementation-ready UI specs and handoff. | Team-wide `caveman` + live-fetched: [`design-taste-frontend`](https://github.com/Leonxlnx/taste-skill/blob/main/skills/taste-skill/SKILL.md) → `.github/skills/design-taste-frontend/`. |
 | ♿ | `accessibility` | Audits UI against WCAG for keyboard nav, screen readers, contrast, and semantics. | Team-wide `caveman` + live-fetched: `accessibility-general`, `forms-a11y`, `keyboard-a11y`, `color-contrast-a11y`, `aria-live-regions-a11y` (from [mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills)) and `frontend-a11y` (from [mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills)) → `.github/skills/`. |
 | ⚡ | `performance` | Reviews rendering, bundle size, network requests, and data-access performance. | Team-wide `caveman` + inline checklist. |
 | 🔒 | `security` | Reviews code/designs for OWASP Top 10-style vulnerabilities and risky config/dependencies. | Team-wide `caveman` + inline checklist. |

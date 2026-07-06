@@ -6,6 +6,7 @@
 const AGENT_SPECIFIC_SKILLS: Record<string, string[]> = {
   coordinator: ["grilling"],
   frontend: ["frontend-design"],
+  designer: ["design-taste-frontend"],
   accessibility: [
     "accessibility-general",
     "forms-a11y",
@@ -22,6 +23,7 @@ const ALL_AGENT_IDS = [
   "backend",
   "frontend",
   "design",
+  "designer",
   "accessibility",
   "performance",
   "security",

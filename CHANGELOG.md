@@ -2,6 +2,14 @@
 
 All notable changes to this package are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Added
+- New `designer` agent focused on interface direction and frontend handoff collaboration.
+- Live-fetched `design-taste-frontend` skill (from `Leonxlnx/taste-skill`) auto-installed when `designer` is selected.
+- README updates for the new `designer` role and skill mapping (team now includes 16 agents).
+- `init` now auto-updates consumer `.gitignore` with toolkit-managed outputs (`.github/agents/`, `.github/skills/`, `.github/instructions/`, `.github/ai-agents-team.lock.json`).
+
 ## [0.1.1] - 2026-07-06
 
 ### Changed

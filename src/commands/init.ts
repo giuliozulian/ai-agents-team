@@ -1,5 +1,7 @@
 import prompts from "prompts";
 import pc from "picocolors";
+import { join } from "node:path";
+import { readFile, writeFile } from "node:fs/promises";
 import {
   listTemplateItems,
   copyTemplateFile,
@@ -14,6 +16,41 @@ import { getToolkitVersion } from "../lib/version.js";
 export interface InitOptions {
   all?: boolean;
   cwd?: string;
+}
+
+const GITIGNORE_MANAGED_ENTRIES = [
+  ".github/agents/",
+  ".github/skills/",
+  ".github/instructions/",
+  ".github/ai-agents-team.lock.json",
+];
+
+async function ensureToolkitEntriesInGitignore(projectRoot: string): Promise<number> {
+  const gitignorePath = join(projectRoot, ".gitignore");
+  let existing = "";
+  try {
+    existing = await readFile(gitignorePath, "utf8");
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw err;
+    }
+  }
+
+  const lines = existing.split(/\r?\n/);
+  const existingSet = new Set(lines.map((line) => line.trim()));
+  const toAdd = GITIGNORE_MANAGED_ENTRIES.filter((entry) => !existingSet.has(entry));
+  if (toAdd.length === 0) return 0;
+
+  const sep = existing.length === 0 || existing.endsWith("\n") ? "" : "\n";
+  const comment = "# ai-agents-team managed outputs";
+  const addComment = !existingSet.has(comment);
+  const appended = [
+    ...(addComment ? [comment] : []),
+    ...toAdd,
+  ].join("\n");
+
+  await writeFile(gitignorePath, `${existing}${sep}${appended}\n`, "utf8");
+  return toAdd.length;
 }
 
 export async function init(options: InitOptions = {}): Promise<void> {
@@ -89,7 +126,19 @@ export async function init(options: InitOptions = {}): Promise<void> {
   }
 
   await saveManifest(projectRoot, manifest);
+
+  let gitignoreAdded = 0;
+  try {
+    gitignoreAdded = await ensureToolkitEntriesInGitignore(projectRoot);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.log(pc.yellow(`! Failed to update .gitignore (${error.message})`));
+  }
+
   console.log(pc.bold(`\nInstalled ${installedCount} file(s). ai-agents-team v${version}`));
+  if (gitignoreAdded > 0) {
+    console.log(pc.dim(`Updated .gitignore with ${gitignoreAdded} ai-agents-team entr${gitignoreAdded === 1 ? "y" : "ies"}.`));
+  }
   if (failures.length > 0) {
     console.log(
       pc.yellow(
