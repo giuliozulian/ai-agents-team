@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 const PACKAGE_JSON_PATH = join(
   dirname(fileURLToPath(import.meta.url)),
   "..",
-  "..",
   "package.json",
 );
 

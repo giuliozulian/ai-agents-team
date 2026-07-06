@@ -18,7 +18,7 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
 
   if (!manifest) {
     console.log(
-      pc.yellow("No agent-toolkit.lock.json found. Run `agent-toolkit init` first."),
+      pc.yellow("No ai-agents-team.lock.json found. Run `ai-agents-team init` first."),
     );
     return;
   }
@@ -73,7 +73,7 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
 
   console.log(
     pc.bold(
-      `\nSync complete (agent-toolkit v${version}): ${updated} updated, ${unchanged} unchanged, ${skipped} skipped (local changes), ${removed} no longer in toolkit.`,
+      `\nSync complete (ai-agents-team v${version}): ${updated} updated, ${unchanged} unchanged, ${skipped} skipped (local changes), ${removed} no longer in toolkit.`,
     ),
   );
   if (skipped > 0 && !options.force) {

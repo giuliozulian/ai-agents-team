@@ -8,9 +8,9 @@ import { getToolkitVersion } from "./lib/version.js";
 const program = new Command();
 
 program
-  .name("agent-toolkit")
+  .name("ai-agents-team")
   .description(
-    "Install and update shared Copilot/Claude agents, skills and instructions in the current project.",
+    "Install and update a team of specialized AI agents (coordinator, security, frontend, accessibility, performance, QA) in the current project.",
   );
 
 program.hook("preAction", async (thisCommand) => {

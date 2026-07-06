@@ -62,5 +62,5 @@ export async function init(options: InitOptions = {}): Promise<void> {
   }
 
   await saveManifest(projectRoot, manifest);
-  console.log(pc.bold(`\nInstalled ${selected.length} item(s). agent-toolkit v${version}`));
+  console.log(pc.bold(`\nInstalled ${selected.length} item(s). ai-agents-team v${version}`));
 }

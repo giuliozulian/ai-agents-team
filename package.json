@@ -1,11 +1,11 @@
 {
-  "name": "@giuliozulian/agent-toolkit",
+  "name": "ai-agents-team",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Shared Copilot/Claude sub-agents, skills and instructions distributed as a CLI-installable toolkit.",
+  "description": "A team of specialized AI agents (coordinator, security, frontend, accessibility, performance, QA) for web development, installable and updatable in any project via CLI.",
   "bin": {
-    "agent-toolkit": "./dist/cli.js"
+    "ai-agents-team": "./dist/cli.js"
   },
   "files": [
     "dist",

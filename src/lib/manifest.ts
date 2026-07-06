@@ -2,7 +2,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { existsSync } from "node:fs";
 
-export const MANIFEST_RELATIVE_PATH = join(".github", "agent-toolkit.lock.json");
+export const MANIFEST_RELATIVE_PATH = join(".github", "ai-agents-team.lock.json");
 
 export interface ManifestEntry {
   /** sha256 of the file content at the time it was written by the toolkit. */

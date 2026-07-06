@@ -15,7 +15,7 @@ export async function list(options: ListOptions = {}): Promise<void> {
 
   const installedTargets = new Set(Object.keys(manifest?.files ?? {}));
 
-  console.log(pc.bold(`agent-toolkit v${version} — available templates:\n`));
+  console.log(pc.bold(`ai-agents-team v${version} — available templates:\n`));
 
   for (const category of ["agents", "skills", "instructions"] as const) {
     const inCategory = items.filter((item) => item.category === category);
@@ -30,7 +30,7 @@ export async function list(options: ListOptions = {}): Promise<void> {
   }
 
   if (!manifest) {
-    console.log(pc.dim("No agent-toolkit.lock.json in this project. Run `agent-toolkit init`."));
+    console.log(pc.dim("No ai-agents-team.lock.json in this project. Run `ai-agents-team init`."));
   } else {
     console.log(pc.dim(`Project last synced with toolkit v${manifest.toolkitVersion}.`));
   }

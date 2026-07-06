@@ -6,7 +6,6 @@ import { fileURLToPath } from "node:url";
 export const TEMPLATES_ROOT = join(
   dirname(fileURLToPath(import.meta.url)),
   "..",
-  "..",
   "templates",
 );
 
