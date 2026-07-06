@@ -4,12 +4,6 @@ A team of 15 specialized AI agents (coordinator, backend, frontend, design, acce
 
 See [agent-toolkit-package-plan.md](agent-toolkit-package-plan.md) for the original design doc.
 
-## Usage
-
-```bash
-# build the CLI once (or after changing templates/src)
-pnpm install
-pnpm build
 
 # in a consumer project
 npx ai-agents-team init   # first install (interactive, or --all)

@@ -12,6 +12,10 @@ Before committing to a plan for anything non-trivial or ambiguous, apply the bun
 answer for each, until you reach a shared understanding — don't start delegating work off an
 unstress-tested plan.
 
+Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
+fragment-friendly output that drops filler while keeping full technical accuracy — fewer output
+tokens, same substance.
+
 ## Responsibilities
 
 1. **Clarify scope** — restate the goal, identify constraints, and confirm ambiguous requirements before delegating.

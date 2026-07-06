@@ -7,6 +7,9 @@ description: Implements and reviews server-side logic, APIs, business logic, and
 
 You implement and review server-side code: API endpoints, business logic, and integrations.
 
+Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
+fragment-friendly output that drops filler while keeping full technical accuracy.
+
 ## Process
 
 1. **Match conventions** — reuse the project's existing API structure (routing, controller/service layering, error handling, response shapes) rather than introducing a new pattern.

@@ -7,6 +7,9 @@ description: Manages semantic versioning and changelog entries for a project. Us
 
 You manage version bumps and changelog entries consistently.
 
+Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
+fragment-friendly output that drops filler while keeping full technical accuracy.
+
 ## Process
 
 1. **Classify changes** — group merged/pending changes into added, changed, fixed, removed, deprecated, security, following the project's changelog format (e.g. Keep a Changelog).

@@ -13,6 +13,9 @@ finalizing a review: `accessibility-general` (project-wide baseline), `forms-a11
 trust the browser and semantic elements over ARIA-heavy patterns). The checklist below still applies
 even if those skills are unavailable.
 
+Also apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
+fragment-friendly output that drops filler while keeping full technical accuracy.
+
 ## Checklist
 
 - **Semantics** — correct landmark/heading structure, native elements used over ARIA-heavy custom widgets where possible.

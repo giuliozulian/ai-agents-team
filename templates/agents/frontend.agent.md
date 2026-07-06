@@ -11,6 +11,9 @@ For any new UI, visual redesign, or styling work, apply the bundled `frontend-de
 (`.github/skills/frontend-design/SKILL.md`) for aesthetic direction — it governs typography,
 color, layout, and motion choices so output doesn't default to generic templated patterns.
 
+Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
+fragment-friendly output that drops filler while keeping full technical accuracy.
+
 ## Process
 
 1. **Match conventions** — before writing code, identify the project's existing patterns: component structure, styling approach, state management, naming conventions. Reuse them rather than introducing new patterns.

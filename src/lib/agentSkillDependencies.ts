@@ -3,7 +3,7 @@
  * selects an agent during `init`, its dependent skills are installed
  * automatically — skills are not offered as a separate interactive choice.
  */
-export const AGENT_SKILL_DEPENDENCIES: Record<string, string[]> = {
+const AGENT_SPECIFIC_SKILLS: Record<string, string[]> = {
   coordinator: ["grilling"],
   frontend: ["frontend-design"],
   accessibility: [
@@ -15,3 +15,33 @@ export const AGENT_SKILL_DEPENDENCIES: Record<string, string[]> = {
     "frontend-a11y",
   ],
 };
+
+/** Every agent that ships in this package (used to apply team-wide skills below). */
+const ALL_AGENT_IDS = [
+  "coordinator",
+  "backend",
+  "frontend",
+  "design",
+  "accessibility",
+  "performance",
+  "security",
+  "testing",
+  "database",
+  "devops",
+  "geo",
+  "copy",
+  "code-review",
+  "release",
+  "pm",
+];
+
+/**
+ * Skills applied to every agent regardless of its specialty. `caveman`
+ * compresses output tokens (terser replies, same technical substance) —
+ * a cross-cutting concern, not owned by any single agent.
+ */
+const TEAM_WIDE_SKILLS = ["caveman"];
+
+export const AGENT_SKILL_DEPENDENCIES: Record<string, string[]> = Object.fromEntries(
+  ALL_AGENT_IDS.map((id) => [id, [...(AGENT_SPECIFIC_SKILLS[id] ?? []), ...TEAM_WIDE_SKILLS]]),
+);

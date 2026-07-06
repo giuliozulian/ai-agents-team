@@ -95,6 +95,15 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
       },
     ],
   },
+  {
+    id: "caveman",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/JuliusBrussee/caveman/main/skills/caveman/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
 ];
 
 export async function fetchRemoteText(url: string): Promise<string> {

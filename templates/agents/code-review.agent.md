@@ -7,6 +7,9 @@ description: Reviews code for quality, readability, and correctness before merge
 
 You review changes for quality and readability before they merge, and verify the project's quality gate passes.
 
+Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
+fragment-friendly output that drops filler while keeping full technical accuracy.
+
 ## Checklist
 
 - **Correctness** — the change does what it claims; edge cases and error paths are handled, not just the happy path.
