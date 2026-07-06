@@ -4,19 +4,39 @@
  * package. This guarantees the installed skill is always the latest
  * upstream version, at the cost of requiring network access during
  * `init`/`sync` and trusting the content served by the source URL at
- * that moment (no local pinned/reviewed copy).
+ * that moment. Some large files ship a pinned local fallback (see
+ * `fallbackSource`) used only if the live fetch keeps failing.
  */
+import { readFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 export interface RemoteSkillFile {
   /** URL the file's content is fetched from at install/sync time. */
   url: string;
   /** File name to write under `.github/skills/<skillId>/`. */
   targetName: string;
+  /**
+   * Absolute path to a pinned local snapshot used as a last-resort fallback
+   * if every live fetch attempt fails (e.g. transient network error/rate
+   * limit on an unusually large file). Omitted for small/stable files where
+   * a stale local copy isn't worth maintaining.
+   */
+  fallbackSource?: string;
 }
 
 export interface RemoteSkillDefinition {
   id: string;
   files: RemoteSkillFile[];
 }
+
+/** Absolute path to the `templates/skills-fallback/` directory shipped with this package. */
+export const SKILL_FALLBACKS_ROOT = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "templates",
+  "skills-fallback",
+);
 
 export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
   {
@@ -70,6 +90,11 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
       {
         url: "https://raw.githubusercontent.com/Leonxlnx/taste-skill/main/skills/taste-skill/SKILL.md",
         targetName: "SKILL.md",
+        // This file is unusually large (~85KB) compared to every other remote
+        // skill in this registry, which makes it more prone to transient
+        // network failures/timeouts. Fall back to a pinned local snapshot
+        // (may lag behind upstream) rather than failing `init`/`sync` outright.
+        fallbackSource: join(SKILL_FALLBACKS_ROOT, "design-taste-frontend", "SKILL.md"),
       },
     ],
   },
@@ -205,13 +230,26 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
   },
 ];
 
-export async function fetchRemoteText(url: string): Promise<string> {
+/**
+ * Fetches a URL's text content with retries and a per-attempt timeout.
+ * `sizeHint` ('small' | 'large') only affects the error message shown when
+ * every attempt fails — large files are more prone to transient network
+ * failures, so the message steers the user toward retrying rather than
+ * assuming the URL is broken.
+ */
+export async function fetchRemoteText(
+  url: string,
+  options: { timeoutMs?: number; sizeHint?: "small" | "large" } = {},
+): Promise<string> {
+  const { timeoutMs = 15_000, sizeHint = "small" } = options;
   const maxAttempts = 3;
   let lastError: Error | undefined;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: controller.signal });
       if (response.ok) {
         return await response.text();
       }
@@ -221,7 +259,13 @@ export async function fetchRemoteText(url: string): Promise<string> {
         throw lastError;
       }
     } catch (err) {
-      lastError = err instanceof Error ? err : new Error(String(err));
+      if (err instanceof Error && err.name === "AbortError") {
+        lastError = new Error(`Timed out after ${timeoutMs}ms fetching ${url}`);
+      } else {
+        lastError = err instanceof Error ? err : new Error(String(err));
+      }
+    } finally {
+      clearTimeout(timer);
     }
 
     if (attempt < maxAttempts) {
@@ -229,5 +273,29 @@ export async function fetchRemoteText(url: string): Promise<string> {
     }
   }
 
-  throw lastError ?? new Error(`Failed to fetch ${url}`);
+  const sizeNote =
+    sizeHint === "large"
+      ? " (this file is unusually large, which makes transient failures more likely — re-running init/sync often succeeds)"
+      : "";
+  throw new Error(`${lastError?.message ?? `Failed to fetch ${url}`}${sizeNote}`);
+}
+
+/**
+ * Reads a remote skill file's content: tries the live URL first (with
+ * retries/timeout), and if that fails and a pinned local fallback exists,
+ * uses the fallback instead of failing outright. Returns whether the
+ * fallback was used so callers can surface a clear warning to the user.
+ */
+export async function readRemoteSkillFile(
+  file: RemoteSkillFile,
+): Promise<{ content: string; usedFallback: boolean }> {
+  const sizeHint: "small" | "large" = file.fallbackSource ? "large" : "small";
+  try {
+    const content = await fetchRemoteText(file.url, { sizeHint });
+    return { content, usedFallback: false };
+  } catch (err) {
+    if (!file.fallbackSource) throw err;
+    const content = await readFile(file.fallbackSource, "utf8");
+    return { content, usedFallback: true };
+  }
 }

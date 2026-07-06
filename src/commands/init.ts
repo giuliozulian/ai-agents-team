@@ -106,16 +106,26 @@ export async function init(options: InitOptions = {}): Promise<void> {
 
   const failures: { targetRelative: string; error: Error }[] = [];
   let installedCount = 0;
+  let fallbackCount = 0;
 
   for (const item of selected) {
     for (const file of item.files) {
       try {
-        const content = await copyTemplateFile(projectRoot, file);
+        const { content, usedFallback } = await copyTemplateFile(projectRoot, file);
         manifest.files[file.targetRelative] = {
           hash: hashContent(content),
           version,
         };
-        console.log(pc.green("+"), file.targetRelative);
+        if (usedFallback) {
+          fallbackCount += 1;
+          console.log(
+            pc.yellow("~"),
+            file.targetRelative,
+            pc.dim("(live fetch failed, used pinned local fallback — may lag behind upstream)"),
+          );
+        } else {
+          console.log(pc.green("+"), file.targetRelative);
+        }
         installedCount += 1;
       } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
@@ -136,6 +146,13 @@ export async function init(options: InitOptions = {}): Promise<void> {
   }
 
   console.log(pc.bold(`\nInstalled ${installedCount} file(s). ai-agents-team v${version}`));
+  if (fallbackCount > 0) {
+    console.log(
+      pc.yellow(
+        `${fallbackCount} file(s) used a pinned local fallback instead of the live source (see ~ above) — re-run \`init\` or \`sync\` later to pick up the live version once network access is restored.`,
+      ),
+    );
+  }
   if (gitignoreAdded > 0) {
     console.log(pc.dim(`Updated .gitignore with ${gitignoreAdded} ai-agents-team entr${gitignoreAdded === 1 ? "y" : "ies"}.`));
   }

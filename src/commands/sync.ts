@@ -55,6 +55,7 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
   let unchanged = 0;
   let removed = 0;
   let failed = 0;
+  let fallbackCount = 0;
 
   for (const [targetRelative, entry] of Object.entries(manifest.files)) {
     const templateFile = fileByTarget.get(targetRelative);
@@ -67,7 +68,7 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
 
     try {
       const localHash = await hashFile(join(projectRoot, targetRelative));
-      const templateContent = await readTemplateFileContent(templateFile);
+      const { content: templateContent, usedFallback } = await readTemplateFileContent(templateFile);
       const templateHash = hashContent(templateContent);
 
       const isLocallyModified = localHash !== null && localHash !== entry.hash;
@@ -85,7 +86,16 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
 
       await copyTemplateFile(projectRoot, templateFile);
       manifest.files[targetRelative] = { hash: templateHash, version };
-      console.log(pc.green("✓ updated"), targetRelative);
+      if (usedFallback) {
+        fallbackCount += 1;
+        console.log(
+          pc.yellow("~ updated (fallback)"),
+          targetRelative,
+          pc.dim("(live fetch failed, used pinned local fallback)"),
+        );
+      } else {
+        console.log(pc.green("✓ updated"), targetRelative);
+      }
       updated += 1;
     } catch (err) {
       const error = err instanceof Error ? err : new Error(String(err));
@@ -96,6 +106,14 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
 
   manifest.toolkitVersion = version;
   await saveManifest(projectRoot, manifest);
+
+  if (fallbackCount > 0) {
+    console.log(
+      pc.yellow(
+        `${fallbackCount} file(s) used a pinned local fallback instead of the live source — re-run \`sync\` later to pick up the live version.`,
+      ),
+    );
+  }
 
   console.log(
     pc.bold(
