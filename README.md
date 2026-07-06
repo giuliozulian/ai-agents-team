@@ -15,6 +15,10 @@ npx ai-agents-team sync   # update installed files to latest templates
 npx ai-agents-team list   # show available vs installed
 ```
 
+`sync` updates only files already installed in your project (tracked by the lock file).
+If new templates were added to the toolkit (for example a new agent), `sync` now prints
+an explicit notice and tells you to run `init` to install them.
+
 `init` copies selected agents/skills/instructions into `.github/` in the current project and writes a
 `.github/ai-agents-team.lock.json` manifest (content hash + version per file). `sync` re-copies template
 files whose local hash still matches the manifest (i.e. untouched since install) and **skips** files that

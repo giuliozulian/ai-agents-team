@@ -4,6 +4,7 @@ import {
   listTemplateItems,
   copyTemplateFile,
   readTemplateFileContent,
+  itemLabel,
   type TemplateFile,
 } from "../lib/copyTemplates.js";
 import { loadManifest, saveManifest } from "../lib/manifest.js";
@@ -29,11 +30,25 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
 
   const items = await listTemplateItems();
   const fileByTarget = new Map<string, TemplateFile>();
+  const ownerByTarget = new Map<string, string>();
   for (const item of items) {
     for (const file of item.files) {
       fileByTarget.set(file.targetRelative, file);
+      ownerByTarget.set(file.targetRelative, itemLabel(item));
     }
   }
+
+  const knownTargets = new Set(Object.keys(manifest.files));
+  const missingTargets = Array.from(ownerByTarget.keys()).filter(
+    (targetRelative) => !knownTargets.has(targetRelative),
+  );
+  const missingTemplateItems = Array.from(
+    new Set(
+      missingTargets
+        .map((targetRelative) => ownerByTarget.get(targetRelative))
+        .filter((label): label is string => Boolean(label)),
+    ),
+  ).sort();
 
   let updated = 0;
   let skipped = 0;
@@ -87,6 +102,20 @@ export async function sync(options: SyncOptions = {}): Promise<void> {
       `\nSync complete (ai-agents-team v${version}): ${updated} updated, ${unchanged} unchanged, ${skipped} skipped (local changes), ${removed} no longer in toolkit, ${failed} failed.`,
     ),
   );
+
+  if (missingTemplateItems.length > 0) {
+    const preview = missingTemplateItems.slice(0, 6).join(", ");
+    const suffix = missingTemplateItems.length > 6 ? ", ..." : "";
+    console.log(
+      pc.yellow(
+        `New templates available but not installed yet (${missingTemplateItems.length}): ${preview}${suffix}`,
+      ),
+    );
+    console.log(
+      pc.dim("Run `ai-agents-team init` to install newly added agents/skills/instructions."),
+    );
+  }
+
   if (skipped > 0 && !options.force) {
     console.log(pc.dim("Re-run with --force to overwrite locally modified files."));
   }

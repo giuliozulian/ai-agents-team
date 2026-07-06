@@ -10,6 +10,9 @@ All notable changes to this package are documented here. Format loosely follows 
 - README updates for the new `designer` role and skill mapping (team now includes 16 agents).
 - `init` now auto-updates consumer `.gitignore` with toolkit-managed outputs (`.github/agents/`, `.github/skills/`, `.github/instructions/`, `.github/ai-agents-team.lock.json`).
 
+### Changed
+- `sync` now detects templates newly introduced by the toolkit but not yet installed in the project, and prints an explicit message to run `init` for installing them.
+
 ## [0.1.1] - 2026-07-06
 
 ### Changed
