@@ -7,6 +7,9 @@ description: Manages semantic versioning and changelog entries for a project. Us
 
 You manage version bumps and changelog entries consistently.
 
+Use the bundled `release-skills` skill (`.github/skills/release-skills/SKILL.md`)
+for end-to-end release workflow automation across project types.
+
 Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
 fragment-friendly output that drops filler while keeping full technical accuracy.
 

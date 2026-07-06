@@ -57,7 +57,7 @@ substance) to reduce output tokens across the whole team, not only a single
 specialist agent.
 
 Each agent ships as a single `.agent.md` file. Most are fully self-contained (no external skill
-dependency — the expertise/checklist is written inline in the agent file). Eight exceptions, all
+dependency — the expertise/checklist is written inline in the agent file). Ten exceptions, all
 fetched live at `init`/`sync` time (see Self-sufficiency rule above) — nothing manual required:
 
 - all agents use `caveman` (team-wide compression skill);
@@ -68,6 +68,8 @@ fetched live at `init`/`sync` time (see Self-sufficiency rule above) — nothing
 - `geo` uses [`seo-geo-aeo`](https://github.com/SNLabat/SEO-GEO-AEO-Skill/blob/main/SKILL.md) from [SNLabat/SEO-GEO-AEO-Skill](https://github.com/SNLabat/SEO-GEO-AEO-Skill) for GEO-aware search optimization workflows.
 - `seo` uses the same [`seo-geo-aeo`](https://github.com/SNLabat/SEO-GEO-AEO-Skill/blob/main/SKILL.md) skill for full SEO/GEO/AEO audits and optimization.
 - `pm` uses [`docs-maintenance`](https://github.com/jeffrigby/somepulp-agents/blob/main/plugins/codebase-health/skills/docs-maintenance/SKILL.md) from [jeffrigby/somepulp-agents](https://github.com/jeffrigby/somepulp-agents) for documentation synchronization and maintenance workflows.
+- `code-review` uses [`code-review`](https://github.com/petyosi/rc/blob/master/claude/skills/code-review/SKILL.md) from [petyosi/rc](https://github.com/petyosi/rc) for structured pre-PR review flows.
+- `release` uses [`release-skills`](https://github.com/JimLiu/baoyu-skills/blob/main/.claude/skills/release-skills/SKILL.md) from [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) for cross-project release workflow automation.
 - `accessibility` uses six skills from [mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills) (AGPL-3.0) and [mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills) (see table below).
 
 | | Agent | Description | Skill it uses |
@@ -86,8 +88,8 @@ fetched live at `init`/`sync` time (see Self-sufficiency rule above) — nothing
 | 🗄️ | `database` | Designs and reviews schema, migrations, indexes, and constraints. | Team-wide `caveman` + inline checklist. |
 | 🚀 | `devops` | Reviews/implements CI/CD pipelines, build/deploy config, and infrastructure as code. | Team-wide `caveman` + inline checklist. |
 | ✍️ | `copy` | Centralizes UI strings, manages i18n/translations, keeps terminology consistent. | Team-wide `caveman` + inline checklist. |
-| 🔍 | `code-review` | Reviews changes for quality/readability pre-merge and runs the lint/typecheck/build gate. | Team-wide `caveman` + inline checklist. |
-| 🏷️ | `release` | Manages semantic versioning and changelog entries. | Team-wide `caveman` + inline checklist. |
+| 🔍 | `code-review` | Reviews changes for quality/readability pre-merge and runs the lint/typecheck/build gate. | Team-wide `caveman` + live-fetched: [`code-review`](https://github.com/petyosi/rc/blob/master/claude/skills/code-review/SKILL.md) → `.github/skills/code-review/`. |
+| 🏷️ | `release` | Manages semantic versioning and changelog entries. | Team-wide `caveman` + live-fetched: [`release-skills`](https://github.com/JimLiu/baoyu-skills/blob/main/.claude/skills/release-skills/SKILL.md) → `.github/skills/release-skills/`. |
 | 📋 | `pm` | Maintains project documentation, changelog, and status tracking. | Team-wide `caveman` + live-fetched: [`docs-maintenance`](https://github.com/jeffrigby/somepulp-agents/blob/main/plugins/codebase-health/skills/docs-maintenance/SKILL.md) → `.github/skills/docs-maintenance/`. |
 
 **Note on trust:** live-fetched skills are pulled from third-party repos you don't control. Review

@@ -7,6 +7,9 @@ description: Reviews code for quality, readability, and correctness before merge
 
 You review changes for quality and readability before they merge, and verify the project's quality gate passes.
 
+Use the bundled `code-review` skill (`.github/skills/code-review/SKILL.md`) for
+pre-PR branch analysis workflows and structured review heuristics.
+
 Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every response: terse,
 fragment-friendly output that drops filler while keeping full technical accuracy.
 

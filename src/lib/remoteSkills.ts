@@ -123,6 +123,24 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
     ],
   },
   {
+    id: "code-review",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/petyosi/rc/master/claude/skills/code-review/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "release-skills",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/JimLiu/baoyu-skills/main/.claude/skills/release-skills/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
     id: "grilling",
     files: [
       {

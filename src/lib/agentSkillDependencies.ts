@@ -11,6 +11,8 @@ const AGENT_SPECIFIC_SKILLS: Record<string, string[]> = {
   geo: ["seo-geo-aeo"],
   seo: ["seo-geo-aeo"],
   pm: ["docs-maintenance"],
+  "code-review": ["code-review"],
+  release: ["release-skills"],
   accessibility: [
     "accessibility-general",
     "forms-a11y",

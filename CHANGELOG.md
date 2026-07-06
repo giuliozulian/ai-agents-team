@@ -9,6 +9,8 @@ All notable changes to this package are documented here. Format loosely follows 
 - New `seo` agent for SEO/GEO/AEO audits and optimization workflows.
 - `geo` and `seo` now auto-install the live-fetched `seo-geo-aeo` skill from `SNLabat/SEO-GEO-AEO-Skill`.
 - `pm` now auto-installs the live-fetched `docs-maintenance` skill from `jeffrigby/somepulp-agents`.
+- `code-review` now auto-installs the live-fetched `code-review` skill from `petyosi/rc`.
+- `release` now auto-installs the live-fetched `release-skills` skill from `JimLiu/baoyu-skills`.
 
 ## [0.1.2] - 2026-07-06
 
