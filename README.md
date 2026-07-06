@@ -1,6 +1,6 @@
 # ai-agents-team
 
-A team of specialized AI agents (coordinator, security-reviewer, frontend-engineer, accessibility-auditor, performance-auditor, qa-test-engineer) for web development, distributed as a small CLI so every project can install and update them from one place instead of copy-pasting files by hand.
+A team of 15 specialized AI agents (coordinator, backend, frontend, design, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm) for web development, distributed as a small CLI so every project can install and update them from one place instead of copy-pasting files by hand.
 
 See [agent-toolkit-package-plan.md](agent-toolkit-package-plan.md) for the original design doc.
 
@@ -25,7 +25,7 @@ were customized locally, unless `--force` is passed.
 ## Repo layout
 
 - `src/` — CLI source (TypeScript, ESM, built with `tsup`).
-- `templates/agents/*.agent.md` — generic sub-agents (coordinator, security-reviewer, frontend-engineer, accessibility-auditor, performance-auditor, qa-test-engineer).
+- `templates/agents/*.agent.md` — 15 generic sub-agents (coordinator, backend, frontend, design, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm).
 - `templates/skills/`, `templates/instructions/` — reserved for future generic skills/instructions (currently empty; project-specific instructions stay in each repo, see the plan doc §1 and §9).
 
 ## Self-sufficiency rule
@@ -37,17 +37,36 @@ exist in a particular user's local environment (e.g. personal `~/.claude/skills`
 
 ## Agents included
 
-Each agent ships as a single self-contained `.agent.md` file — no external skill dependency. The "skill"
-column is the specific expertise/checklist each one applies (defined inline in the agent file itself).
+Each agent ships as a single `.agent.md` file. Almost all of them are fully self-contained (no
+external skill dependency — the expertise/checklist is written inline in the agent file). The
+exception is `accessibility`, which references community accessibility skills that are **not**
+bundled in this package and must be installed globally on the machine running the agent (see note
+below the table) — everything else works standalone.
 
-| Agent | Skill it applies |
-|---|---|
-| `coordinator` | Breaks multi-concern tasks into steps and delegates each to the right specialist below, then integrates and verifies the combined result. |
-| `security-reviewer` | OWASP Top 10-style review: injection, auth/access control, sensitive data exposure, input validation, vulnerable dependencies, insecure config, XSS/SSRF. |
-| `frontend-engineer` | Implements/refactors UI matching existing project conventions (component structure, styling, state management), with accessibility-by-default. |
-| `accessibility-auditor` | WCAG 2.1/2.2 AA audit: semantics, keyboard operability, screen-reader support, color contrast, form labeling, reduced-motion handling. |
-| `performance-auditor` | Rendering, bundle size, network waterfalls, data-access (N+1/indexes), and asset optimization review. |
-| `qa-test-engineer` | Test strategy and coverage review: contract-based test design, flaky-test diagnosis, matching existing test conventions. |
+| | Agent | Description | Skill it uses |
+|---|---|---|---|
+| 🧭 | `coordinator` | Coordinates multi-step engineering work across all the specialist agents below: plans, delegates, integrates, and verifies the result. | — (inline delegation logic only) |
+| ⚙️ | `backend` | Implements and reviews server-side logic, APIs, business logic, and third-party integrations. | — (inline checklist only) |
+| 🖥️ | `frontend` | Implements and refactors UI components/pages, matching existing project conventions. | — (inline checklist only) |
+| 🎨 | `design` | Reviews and defines design tokens, layout, spacing, and visual/UX consistency. | — (inline checklist only) |
+| ♿ | `accessibility` | Audits UI against WCAG for keyboard nav, screen readers, contrast, and semantics. | Community skills referenced in the plan doc: `forms`, `keyboard`, `color-contrast`, `aria-live-regions`, `ACCESSIBILITY-general` ([mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills)), `frontend-a11y` ([mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills)) — **not bundled**, install globally (see below). |
+| ⚡ | `performance` | Reviews rendering, bundle size, network requests, and data-access performance. | — (inline checklist only) |
+| 🔒 | `security` | Reviews code/designs for OWASP Top 10-style vulnerabilities and risky config/dependencies. | — (inline checklist only) |
+| 🧪 | `testing` | Designs/writes automated tests, reviews coverage, diagnoses flaky failures. | — (inline checklist only) |
+| 🗄️ | `database` | Designs and reviews schema, migrations, indexes, and constraints. | — (inline checklist only) |
+| 🚀 | `devops` | Reviews/implements CI/CD pipelines, build/deploy config, and infrastructure as code. | — (inline checklist only) |
+| 🌍 | `geo` | Implements and reviews geolocation, maps, and spatial queries (e.g. PostGIS). | — (inline checklist only) |
+| ✍️ | `copy` | Centralizes UI strings, manages i18n/translations, keeps terminology consistent. | — (inline checklist only) |
+| 🔍 | `code-review` | Reviews changes for quality/readability pre-merge and runs the lint/typecheck/build gate. | — (inline checklist only) |
+| 🏷️ | `release` | Manages semantic versioning and changelog entries. | — (inline checklist only) |
+| 📋 | `pm` | Maintains project documentation, changelog, and status tracking. | — (inline responsibilities only) |
+
+**Installing the `accessibility` skills globally:** these are third-party skill packs, not part of
+this package (per the self-sufficiency rule above, nothing here silently depends on them — the
+`accessibility` agent's own inline WCAG checklist works without them). If you want the extra
+coverage, clone/symlink them yourself into a global skills folder your host reads (e.g.
+`~/.claude/skills/`, `~/.agents/skills/`, or `~/.copilot/skills/` depending on host), following each
+repo's own install instructions.
 
 ## Using it with GitHub Copilot, Claude Code, and Codex
 
@@ -58,8 +77,8 @@ location/format, since there is no shared standard across tools yet:
 | Host | Where it looks for agents | What to do |
 |---|---|---|
 | **GitHub Copilot / VS Code** | `.github/agents/*.agent.md` | Nothing extra — this is exactly what `init` installs. |
-| **Claude Code** | `.claude/agents/*.md` (project) or `~/.claude/agents/*.md` (user, all projects) | Copy the installed files there and drop the `.agent` part of the extension, e.g. `cp .github/agents/security-reviewer.agent.md .claude/agents/security-reviewer.md`. The YAML frontmatter (`name`, `description`) is compatible; Claude also supports an optional `tools:`/`model:` field you can add per agent. |
-| **Codex CLI** | No dedicated per-agent file format at the time of writing — Codex reads a single `AGENTS.md` for instructions. | Reference the relevant agent file(s) from `AGENTS.md` (e.g. "When reviewing security, follow `.github/agents/security-reviewer.agent.md`"), or paste the agent's body into `AGENTS.md` directly. |
+| **Claude Code** | `.claude/agents/*.md` (project) or `~/.claude/agents/*.md` (user, all projects) | Copy the installed files there and drop the `.agent` part of the extension, e.g. `cp .github/agents/security.agent.md .claude/agents/security.md`. The YAML frontmatter (`name`, `description`) is compatible; Claude also supports an optional `tools:`/`model:` field you can add per agent. |
+| **Codex CLI** | No dedicated per-agent file format at the time of writing — Codex reads a single `AGENTS.md` for instructions. | Reference the relevant agent file(s) from `AGENTS.md` (e.g. "When reviewing security, follow `.github/agents/security.agent.md`"), or paste the agent's body into `AGENTS.md` directly. |
 
 Because every agent file here is self-contained (see the self-sufficiency rule above), copying it
 as-is to another host's expected location is safe — there's never a hidden skill/instruction

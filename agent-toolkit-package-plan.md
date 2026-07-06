@@ -116,11 +116,32 @@ L'output di `sync` elenca i file aggiornati, quelli saltati per modifica locale,
 
 ## 7. Migrazione iniziale (primo set di contenuti da i-farm)
 
-Da portare come v0.1.0 del pacchetto (contenuti generici, non project-specific):
+Inventario reale di tutti gli agent presenti oggi in `.github/agents/` (15 file), da portare come v0.1.0 del pacchetto:
 
-- [ ] `.github/agents/coordinator.agent.md` (versione generica, senza riferimenti a i-farm)
-- [ ] `security-reviewer`, `frontend-engineer`, `frontend-designer`, `accessibility-auditor`, `performance-auditor`, `qa-test-engineer` (se già esistono come file in questo repo, altrimenti da creare ex novo nel toolkit)
-- [ ] Skill riutilizzabili identificate nelle istruzioni i-farm: `frontend-design`, `security-hardening`, `accessibility-audit`, `performance-review` (verificarne l'esistenza effettiva come `SKILL.md` prima di includerle)
+| Agente | Descrizione | Tools | Skill esplicitamente richiamate |
+|---|---|---|---|
+| `coordinator` | Project lead: raccoglie requisiti, scompone in sotto-task, assegna agli agenti, verifica coerenza, riepilogo finale | `vscode, execute, read, agent, edit, search, web, browser, episodic-memory/read, todo` | nessuna esplicita |
+| `backend` | API, logica di business, integrazioni, schema dati lato server | `view, edit, bash, grep` | nessuna esplicita |
+| `frontend` | UI, stato applicativo, integrazione API; niente stringhe hardcoded (delega al copy agent) | `view, edit, bash, grep` | nessuna esplicita |
+| `design` | Design token, layout, coerenza visiva/UX | `view, edit` | nessuna esplicita |
+| `accessibility` | WCAG 2.2 AA su markup/ARIA/focus/contrasto | `view, edit, grep` | `forms`, `keyboard`, `color-contrast`, `aria-live-regions`, `ACCESSIBILITY-general` (mgifford/accessibility-skills), `frontend-a11y` (mikemai2awesome/agent-skills) — installate globalmente in `~/.copilot/skills` |
+| `performance` | Bundle size, query N+1, re-render, caching | `view, edit, bash, grep` | nessuna esplicita |
+| `security` | Injection, XSS/CSRF, secrets, dipendenze vulnerabili, auth | `view, edit, bash, grep` | nessuna esplicita |
+| `testing` | Unit/integration/e2e su codice nuovo o modificato | `view, edit, bash` | nessuna esplicita |
+| `database` | Schema, migrazioni reversibili, indici, vincoli | `view, edit, bash, grep` | nessuna esplicita |
+| `devops` | Pipeline CI/CD, build/deploy, IaC | `view, edit, bash` | nessuna esplicita |
+| `geo` | Geolocalizzazione, mappe, query spaziali (PostGIS ecc.) | `view, edit, bash, grep` | nessuna esplicita |
+| `copy` | Centralizzazione stringhe/i18n, traduzioni, coerenza terminologica | `view, edit, grep` | nessuna esplicita |
+| `code-review` | Revisione qualità/leggibilità pre-merge, gate `pnpm lint && typecheck && build` | `view, grep` | nessuna esplicita |
+| `release` | Semantic versioning + changelog | `view, edit, bash` | nessuna esplicita |
+| `pm` | Documentazione di progetto, `CHANGELOG.md`, `plans/status.md` | `view, edit` | nessuna esplicita |
+
+Note per la migrazione:
+
+- [ ] Portare tutti e 15 gli agent come template generici (rinominare/ripulire eventuali riferimenti a i-farm, se presenti).
+- [ ] Solo `accessibility` ha skill esplicite dichiarate: valutare se includerle come dipendenza del toolkit o lasciarle come installazione globale separata (`~/.copilot/skills`), dato che non sono per-progetto.
+- [ ] Per gli altri 14 agent, valutare in una fase successiva (non bloccante per v0.1.0) l'aggiunta di una sezione "Skill da consultare" analoga a quella di `accessibility`, mappando le skill già disponibili nel workspace (famiglia `atlas-devops-*`, `atlas-caveman-*` in `.github/skills/`, più le skill personali in `~/.agents/skills` e `~/.claude/skills`).
+- [ ] Skill riutilizzabili citate nelle istruzioni i-farm ma non ancora verificate come `SKILL.md` reali: `frontend-design`, `security-hardening`, `accessibility-audit`, `performance-review` — controllarne l'esistenza effettiva prima di includerle nel pacchetto.
 
 Restano in i-farm (non migrano): `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` — contengono stack, path e regole specifiche del progetto, e devono solo **richiamare per nome** gli agent/skill del toolkit.
 
