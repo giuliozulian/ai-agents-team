@@ -5,6 +5,12 @@ All notable changes to this package are documented here. Format loosely follows 
 ## [Unreleased]
 
 ### Added
+- `coordinator` now documents an explicit 4-phase workflow (Analyze → Delegate → Validate → Integrate)
+  with mandatory human approval checkpoints after the plan and after the diff/code-review result;
+  `code-review` is now a required step before any change is considered done, not just an optional gate.
+- README documents the human/manual workflow: how a team drives work through `coordinator`, what to
+  approve at each phase, and why generated code must go through the `code-review` quality gate before
+  being trusted.
 - `testing` now auto-installs the live-fetched `writing-tests` skill from `ntcoding/claude-skillz`.
 - `security` now auto-installs the live-fetched `security` skill from `openhands/skills`.
 - `devops` now auto-installs the live-fetched `ci-cd` skill from `ahmedasmar/devops-claude-skills`.

@@ -26,6 +26,30 @@ were customized locally, unless `--force` is passed. During `init`, the CLI also
 outputs are listed in `.gitignore` (`.github/agents/`, `.github/skills/`, `.github/instructions/`, and
 `.github/ai-agents-team.lock.json`) to avoid accidental commits.
 
+## Human workflow: how a team actually uses this day-to-day
+
+Installing the agents is not the finish line — they're only useful inside a workflow where a human
+still approves the result. For anything beyond a one-line fix, drive the work through `coordinator`
+rather than invoking a specialist agent directly, and go through these four phases:
+
+1. **Analyze** — `coordinator` restates the goal, lists constraints/ambiguities, and (via the bundled
+   `grilling` skill) stress-tests the plan with you one question at a time. It proposes a short plan:
+   steps, dependencies, which specialist owns each step.
+   **You approve the plan before anything is delegated.**
+2. **Delegate** — `coordinator` hands each step to the right specialist (`backend`, `frontend`,
+   `security`, etc.), scoped to one small, independently reviewable change at a time.
+3. **Validate** — every change goes through `code-review` before it's considered done: it runs/confirms
+   `lint`/`typecheck`/`build` and reports blocking issues vs. suggestions.
+   **You review the diff and the code-review findings before integrating.** Never accept generated
+   code on trust alone — read the diff, check it does what was asked, and confirm the quality gate
+   actually passed (don't take "looks fine" as a substitute for running it).
+4. **Integrate & close** — `coordinator` merges the approved changes, reports what changed, which
+   specialist produced it, what was validated, and any open risks — then you commit/open the PR.
+
+This mirrors how the `coordinator` agent template is written (see
+`templates/agents/coordinator.agent.md`), so it applies unchanged in any host (Copilot, Claude Code,
+Codex — see table below).
+
 ## Repo layout
 
 - `src/` — CLI source (TypeScript, ESM, built with `tsup`).

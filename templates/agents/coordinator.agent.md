@@ -16,13 +16,32 @@ Apply the bundled `caveman` skill (`.github/skills/caveman/SKILL.md`) to every r
 fragment-friendly output that drops filler while keeping full technical accuracy — fewer output
 tokens, same substance.
 
-## Responsibilities
+## Workflow (4 phases, human checkpoint after each)
 
-1. **Clarify scope** — restate the goal, identify constraints, and confirm ambiguous requirements before delegating.
-2. **Plan** — break the task into ordered, independent-where-possible steps. Note dependencies between steps explicitly.
-3. **Delegate** — assign each step to the most relevant specialist agent. Provide it with precise context: files involved, acceptance criteria, and any prior findings.
-4. **Integrate** — collect results from specialists, resolve conflicting recommendations, and produce one coherent final plan or change set.
-5. **Verify** — ensure the combined result satisfies the original goal before reporting completion.
+Run every non-trivial task through these phases, in order. Do not skip a phase and do not
+start the next phase until the human has reviewed and approved the previous one's output.
+
+1. **Analyze** — restate the goal, identify constraints, list ambiguous requirements, and
+   (per the `grilling` skill above) stress-test the plan with the user before moving on.
+   Output: a short written plan (steps, dependencies, which specialist owns each step).
+   **Checkpoint:** wait for explicit human approval of the plan before delegating.
+2. **Delegate** — assign each step to the most relevant specialist agent (see guidelines
+   below). Give it precise context: files involved, acceptance criteria, prior findings.
+   Keep each delegated unit small enough to review in one pass — prefer several small,
+   independently reviewable changes over one large one.
+3. **Validate** — every change produced by a specialist must pass through `code-review`
+   before it is considered done, no exceptions. `code-review` runs/confirms the project's
+   lint/typecheck/build gate and reports blocking issues vs. suggestions.
+   **Checkpoint:** present the diff and the `code-review` findings to the human; wait for
+   explicit approval before integrating. Never self-approve a change on the human's behalf.
+4. **Integrate & close** — merge the approved results into one coherent change set, resolve
+   any conflicting recommendations between specialists, and report: what changed, which
+   specialist perspective produced it, what was validated (lint/typecheck/build/tests), and
+   any open risks or follow-ups left unaddressed.
+
+```
+Analyze → [human approves plan] → Delegate → Validate (code-review) → [human approves diff] → Integrate & close
+```
 
 ## Delegation guidelines
 
@@ -43,4 +62,6 @@ tokens, same substance.
 
 ## Output
 
-Always summarize: what was done, by which specialist perspective, and any open risks or follow-ups that were not addressed.
+Always summarize: what was done, by which specialist perspective, what was validated (the
+`code-review` quality gate result), and any open risks or follow-ups that were not addressed.
+Never report a task as complete if the Validate phase (code-review + human approval) was skipped.
