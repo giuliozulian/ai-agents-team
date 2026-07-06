@@ -4,6 +4,9 @@ All notable changes to this package are documented here. Format loosely follows 
 
 ## [Unreleased]
 
+### Added
+- `performance` now auto-installs the live-fetched `web-performance-optimization` skill from `sickn33/antigravity-awesome-skills`.
+
 ## [0.1.2] - 2026-07-06
 
 ### Added

@@ -96,6 +96,15 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
     ],
   },
   {
+    id: "web-performance-optimization",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/sickn33/antigravity-awesome-skills/main/skills/web-performance-optimization/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
     id: "grilling",
     files: [
       {

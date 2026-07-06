@@ -7,6 +7,7 @@ const AGENT_SPECIFIC_SKILLS: Record<string, string[]> = {
   coordinator: ["grilling"],
   frontend: ["frontend-design"],
   designer: ["design-taste-frontend"],
+  performance: ["web-performance-optimization"],
   accessibility: [
     "accessibility-general",
     "forms-a11y",
