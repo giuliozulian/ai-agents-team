@@ -32,6 +32,60 @@ export const REMOTE_SKILLS: RemoteSkillDefinition[] = [
       },
     ],
   },
+  {
+    id: "accessibility-general",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mgifford/accessibility-skills/main/skills/ACCESSIBILITY-general/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "forms-a11y",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mgifford/accessibility-skills/main/skills/forms/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "keyboard-a11y",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mgifford/accessibility-skills/main/skills/keyboard/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "color-contrast-a11y",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mgifford/accessibility-skills/main/skills/color-contrast/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "aria-live-regions-a11y",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mgifford/accessibility-skills/main/skills/aria-live-regions/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
+  {
+    id: "frontend-a11y",
+    files: [
+      {
+        url: "https://raw.githubusercontent.com/mikemai2awesome/agent-skills/main/skills/frontend-a11y/SKILL.md",
+        targetName: "SKILL.md",
+      },
+    ],
+  },
 ];
 
 export async function fetchRemoteText(url: string): Promise<string> {

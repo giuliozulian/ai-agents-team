@@ -25,32 +25,37 @@ were customized locally, unless `--force` is passed.
 ## Repo layout
 
 - `src/` — CLI source (TypeScript, ESM, built with `tsup`).
+- `src/lib/remoteSkills.ts` — registry of skills fetched live from their upstream source at `init`/`sync` time (see below).
 - `templates/agents/*.agent.md` — 15 generic sub-agents (coordinator, backend, frontend, design, accessibility, performance, security, testing, database, devops, geo, copy, code-review, release, pm).
-- `templates/skills/frontend-design/` — bundled skill used by the `frontend` agent (Apache-2.0, from [anthropics/skills](https://github.com/anthropics/skills)).
 - `templates/instructions/` — reserved for future generic instructions (currently empty; project-specific instructions stay in each repo, see the plan doc §1 and §9).
 
 ## Self-sufficiency rule
 
-Every template shipped in this package must be self-contained: an agent must never assume a skill or
-instruction that isn't itself included under `templates/`. Since this package is published publicly,
-anyone installing it on any machine must get fully-working agents with no dependency on files that only
-exist in a particular user's local environment (e.g. personal `~/.claude/skills`).
+Every agent shipped in this package must work standalone: it must never assume a skill or
+instruction that this package doesn't itself install. Some agents (`frontend`, `accessibility`)
+depend on skills that aren't vendored as static files in this repo — instead, `init`/`sync` fetch
+them **live** from their upstream source straight into the consumer project's `.github/skills/`
+(see `src/lib/remoteSkills.ts`). This keeps them always up to date with zero manual steps, at the
+cost of requiring network access during `init`/`sync` and trusting the content served by the source
+URL at that moment (no local pinned/reviewed copy). `init`/`sync` retry transient failures and report
+any file that couldn't be fetched without aborting the rest of the run.
 
 ## Agents included
 
 Each agent ships as a single `.agent.md` file. Most are fully self-contained (no external skill
-dependency — the expertise/checklist is written inline in the agent file). Two exceptions:
+dependency — the expertise/checklist is written inline in the agent file). Two exceptions, both
+fetched live at `init`/`sync` time (see Self-sufficiency rule above) — nothing manual required:
 
-- `frontend` uses the **bundled** [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) skill (Apache-2.0, copied into `templates/skills/frontend-design/`) — installed automatically by `init`, nothing extra to do.
-- `accessibility` references community accessibility skills that are **not** bundled and must be installed globally (see note below the table).
+- `frontend` uses [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) (Apache-2.0, [anthropics/skills](https://github.com/anthropics/skills)).
+- `accessibility` uses six skills from [mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills) (AGPL-3.0) and [mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills) (see table below).
 
 | | Agent | Description | Skill it uses |
 |---|---|---|---|
 | 🧭 | `coordinator` | Coordinates multi-step engineering work across all the specialist agents below: plans, delegates, integrates, and verifies the result. | — (inline delegation logic only) |
 | ⚙️ | `backend` | Implements and reviews server-side logic, APIs, business logic, and third-party integrations. | — (inline checklist only) |
-| 🖥️ | `frontend` | Implements and refactors UI components/pages, matching existing project conventions. | Bundled: [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) (installed automatically, see `templates/skills/frontend-design/`). |
+| 🖥️ | `frontend` | Implements and refactors UI components/pages, matching existing project conventions. | Live-fetched: [`frontend-design`](https://github.com/anthropics/skills/blob/main/skills/frontend-design/SKILL.md) → `.github/skills/frontend-design/`. |
 | 🎨 | `design` | Reviews and defines design tokens, layout, spacing, and visual/UX consistency. | — (inline checklist only) |
-| ♿ | `accessibility` | Audits UI against WCAG for keyboard nav, screen readers, contrast, and semantics. | Community skills referenced in the plan doc: `forms`, `keyboard`, `color-contrast`, `aria-live-regions`, `ACCESSIBILITY-general` ([mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills)), `frontend-a11y` ([mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills)) — **not bundled**, install globally (see below). |
+| ♿ | `accessibility` | Audits UI against WCAG for keyboard nav, screen readers, contrast, and semantics. | Live-fetched: `accessibility-general`, `forms-a11y`, `keyboard-a11y`, `color-contrast-a11y`, `aria-live-regions-a11y` (from [mgifford/accessibility-skills](https://github.com/mgifford/accessibility-skills)) and `frontend-a11y` (from [mikemai2awesome/agent-skills](https://github.com/mikemai2awesome/agent-skills)) → `.github/skills/`. |
 | ⚡ | `performance` | Reviews rendering, bundle size, network requests, and data-access performance. | — (inline checklist only) |
 | 🔒 | `security` | Reviews code/designs for OWASP Top 10-style vulnerabilities and risky config/dependencies. | — (inline checklist only) |
 | 🧪 | `testing` | Designs/writes automated tests, reviews coverage, diagnoses flaky failures. | — (inline checklist only) |
@@ -62,12 +67,9 @@ dependency — the expertise/checklist is written inline in the agent file). Two
 | 🏷️ | `release` | Manages semantic versioning and changelog entries. | — (inline checklist only) |
 | 📋 | `pm` | Maintains project documentation, changelog, and status tracking. | — (inline responsibilities only) |
 
-**Installing the `accessibility` skills globally:** these are third-party skill packs, not part of
-this package (per the self-sufficiency rule above, nothing here silently depends on them — the
-`accessibility` agent's own inline WCAG checklist works without them). If you want the extra
-coverage, clone/symlink them yourself into a global skills folder your host reads (e.g.
-`~/.claude/skills/`, `~/.agents/skills/`, or `~/.copilot/skills/` depending on host), following each
-repo's own install instructions.
+**Note on trust:** live-fetched skills are pulled from third-party repos you don't control. Review
+`src/lib/remoteSkills.ts` if you want to audit exactly which URLs are fetched, or fork/pin them if you
+need a reviewed, network-independent alternative.
 
 ## Using it with GitHub Copilot, Claude Code, and Codex
 

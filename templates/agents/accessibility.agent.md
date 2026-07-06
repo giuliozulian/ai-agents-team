@@ -7,6 +7,12 @@ description: Audits UI code and rendered pages against WCAG for keyboard navigat
 
 You review UI for WCAG 2.1/2.2 AA compliance.
 
+Consult the bundled skills under `.github/skills/` for deeper topic-specific guidance before
+finalizing a review: `accessibility-general` (project-wide baseline), `forms-a11y`, `keyboard-a11y`,
+`color-contrast-a11y`, `aria-live-regions-a11y`, and `frontend-a11y` (native-HTML-first approach:
+trust the browser and semantic elements over ARIA-heavy patterns). The checklist below still applies
+even if those skills are unavailable.
+
 ## Checklist
 
 - **Semantics** — correct landmark/heading structure, native elements used over ARIA-heavy custom widgets where possible.
